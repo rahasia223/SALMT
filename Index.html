@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Untuk Ibu Tercinta 💌</title>
+<style>
+  :root{
+    --wood:#6b4423;
+    --wood-dark:#4a2f18;
+    --paper:#fdf6e3;
+    --envelope:#f2e2c4;
+    --envelope-dark:#d9c19a;
+    --accent:#c0392b;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
+  html,body{
+    margin:0; padding:0; width:100%; height:100%; overflow:hidden;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  #scene{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(180deg,#1b2a49 0%, #2c4270 55%, #3a5a8c 100%);
+    transition:background 1.6s ease;
+    overflow:hidden;
+  }
+  #scene.celebrate{
+    background:linear-gradient(180deg,#ff9a9e 0%, #fecfef 50%, #ffd97a 100%);
+  }
+  /* stars for night background */
+  .star{
+    position:absolute; width:2px; height:2px; background:#fff; border-radius:50%;
+    opacity:.8; animation:twinkle 2.5s infinite ease-in-out;
+  }
+  @keyframes twinkle{ 0%,100%{opacity:.2;} 50%{opacity:1;} }
+  #scene.celebrate .star{ display:none; }
+
+  #hint{
+    position:absolute; bottom:6%; left:50%; transform:translateX(-50%);
+    color:#fdf6e3; font-size:15px; text-align:center; letter-spacing:.3px;
+    opacity:.9; animation:pulseHint 1.8s infinite ease-in-out; padding:0 20px;
+    pointer-events:none; text-shadow:0 2px 6px rgba(0,0,0,.4);
+  }
+  @keyframes pulseHint{ 0%,100%{opacity:.5;} 50%{opacity:1;} }
+
+  /* ===== MAILBOX ===== */
+  #mailbox-wrap{
+    position:relative; display:flex; flex-direction:column; align-items:center;
+    cursor:pointer; transition:transform .3s ease;
+  }
+  #mailbox-wrap:active{ transform:scale(.97); }
+  #mailbox{
+    width:150px; height:110px; background:linear-gradient(145deg,var(--accent),#8e2418);
+    border-radius:20px 20px 8px 8px; position:relative; box-shadow:0 15px 30px rgba(0,0,0,.4);
+  }
+  #mailbox:before{ /* slot */
+    content:''; position:absolute; top:28px; left:20px; right:20px; height:8px;
+    background:#3a0f0a; border-radius:4px;
+  }
+  #mailbox-flag{
+    position:absolute; top:-6px; right:-10px; width:8px; height:34px; background:#7a1c12;
+    border-radius:2px; transform-origin:bottom center; transform:rotate(-25deg);
+  }
+  #mailbox-flag:after{
+    content:''; position:absolute; top:-2px; left:0; width:22px; height:14px; background:var(--accent);
+    border:2px solid #7a1c12; border-radius:2px;
+  }
+  #mailbox-pole{
+    width:16px; height:70px; background:linear-gradient(180deg,#5c5c5c,#333);
+    border-radius:3px;
+  }
+  #mailbox-peek{
+    position:absolute; top:16px; left:50%; transform:translateX(-50%) translateY(0);
+    width:60px; height:14px; background:var(--envelope); border-radius:2px 2px 0 0;
+    box-shadow:0 -2px 6px rgba(0,0,0,.2);
+  }
+
+  /* ===== ENVELOPE ===== */
+  #envelope-stage{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .5s ease;
+  }
+  #envelope-stage.show{ opacity:1; pointer-events:auto; }
+
+  #envelope{
+    position:relative; width:280px; height:190px; cursor:grab;
+    filter:drop-shadow(0 20px 25px rgba(0,0,0,.35));
+    transition:transform .15s ease;
+    touch-action:none;
+  }
+  #envelope.taken{ animation:popIn .5s ease; }
+  @keyframes popIn{ 0%{transform:scale(.4) translateY(80px); opacity:0;} 100%{transform:scale(1) translateY(0); opacity:1;} }
+
+  #env-body{
+    position:absolute; inset:0; background:var(--envelope);
+    border-radius:6px; overflow:hidden; border:1px solid var(--envelope-dark);
+  }
+  #env-body:before,#env-body:after{ /* side folds */
+    content:''; position:absolute; bottom:0; width:0; height:0;
+    border-style:solid;
+  }
+  #env-body:before{ /* left */
+    left:0; border-width:95px 0 95px 140px; border-color:transparent transparent transparent var(--envelope-dark);
+    opacity:.55;
+  }
+  #env-body:after{ /* right */
+    right:0; border-width:95px 140px 95px 0; border-color:transparent var(--envelope-dark) transparent transparent;
+    opacity:.55;
+  }
+  #env-flap{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    clip-path:polygon(0 0, 100% 0, 50% 58%);
+    background:linear-gradient(160deg,#f7e9cd,var(--envelope-dark));
+    transform-origin:top center; transition:transform .5s cubic-bezier(.3,1.4,.5,1);
+    z-index:3; border-bottom:1px solid rgba(0,0,0,.05);
+  }
+  #envelope.opened #env-flap{ transform:rotateX(180deg) translateY(2px); }
+  #env-seal{
+    position:absolute; top:38%; left:50%; transform:translate(-50%,-50%);
+    width:46px; height:46px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#e05a4a,var(--accent));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px;
+    box-shadow:0 4px 8px rgba(0,0,0,.3); z-index:4; transition:opacity .3s ease, transform .3s ease;
+  }
+  #envelope.opened #env-seal{ opacity:0; transform:translate(-50%,-50%) scale(.3); pointer-events:none; }
+
+  #drag-handle{
+    position:absolute; top:52%; left:50%; transform:translate(-50%,-50%);
+    z-index:5; width:120px; height:44px; border-radius:22px;
+    background:rgba(255,255,255,.3); backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center; cursor:grab;
+    border:1px solid rgba(255,255,255,.6); transition:opacity .3s ease;
+    touch-action:none; animation:handleBounce 1.4s infinite ease-in-out;
+  }
+  #drag-handle span{ font-size:20px; color:#fff; }
+  @keyframes handleBounce{ 0%,100%{ transform:translate(-50%,-50%);} 50%{ transform:translate(-50%,calc(-50% - 8px));} }
+  #envelope.opened #drag-handle{ opacity:0; pointer-events:none; }
+
+  /* letter peeking out then pulled */
+  #letter{
+    position:absolute; left:50%; bottom:14px; transform:translateX(-50%) translateY(0);
+    width:240px; height:170px; background:var(--paper);
+    border-radius:6px; box-shadow:0 10px 20px rgba(0,0,0,.25);
+    z-index:2; display:none; padding:16px 18px; overflow:hidden;
+    cursor:grab; touch-action:none;
+  }
+  #letter.visible{ display:block; }
+  #letter-lines{ width:100%; }
+  #letter-lines div{ height:6px; background:#e3d6b8; border-radius:3px; margin-bottom:10px; }
+  #letter-lines div:nth-child(1){width:80%;}
+  #letter-lines div:nth-child(2){width:95%;}
+  #letter-lines div:nth-child(3){width:70%;}
+  #letter-lines div:nth-child(4){width:88%;}
+
+  /* ===== FULL LETTER (final reading card) ===== */
+  #full-letter{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity 1s ease; z-index:10;
+  }
+  #full-letter.show{ opacity:1; pointer-events:auto; }
+  #card{
+    width:min(520px,88vw); max-height:82vh; overflow-y:auto;
+    background:var(--paper); border-radius:14px; padding:34px 30px;
+    box-shadow:0 25px 50px rgba(0,0,0,.35);
+    background-image:
+      linear-gradient(var(--paper),var(--paper)),
+      repeating-linear-gradient(#fdf6e3 0px,#fdf6e3 34px,#eaddc0 35px);
+    background-blend-mode:normal;
+    animation:cardIn .8s ease;
+  }
+  @keyframes cardIn{ 0%{transform:translateY(40px) scale(.9); opacity:0;} 100%{transform:translateY(0) scale(1); opacity:1;} }
+  #card h1{
+    margin:0 0 6px; text-align:center; font-family:'Brush Script MT', cursive, 'Segoe UI';
+    font-size:34px; color:var(--accent);
+  }
+  #card .divider{ text-align:center; margin:6px 0 18px; font-size:18px; opacity:.6; }
+  #card p{
+    color:#4a3b28; line-height:1.85; font-size:16.5px; margin:0 0 14px; text-align:justify;
+  }
+  #card .signoff{ text-align:right; font-style:italic; margin-top:20px; color:var(--accent); font-size:18px; }
+  #close-hint{ text-align:center; margin-top:22px; font-size:12px; color:#8a7a5c; }
+
+  /* ===== Celebration deco ===== */
+  .balloon{
+    position:absolute; bottom:-140px; width:46px; height:58px; border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+    opacity:0; animation:floatUp 9s ease-in forwards;
+  }
+  .balloon:after{
+    content:''; position:absolute; bottom:-40px; left:50%; width:1px; height:40px; background:rgba(0,0,0,.25);
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    8%{ opacity:.95; }
+    100%{ transform:translateY(-115vh) translateX(var(--drift,20px)) rotate(8deg); opacity:0; }
+  }
+  .confetti{
+    position:absolute; top:-20px; width:9px; height:14px; opacity:.95;
+    animation:confettiFall linear forwards;
+  }
+  @keyframes confettiFall{
+    0%{ transform:translateY(0) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(115vh) rotate(720deg); opacity:.9; }
+  }
+  #deco-layer{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:5; }
+
+  #sound-toggle{
+    position:absolute; top:18px; right:18px; z-index:20; width:44px; height:44px;
+    border-radius:50%; border:none; background:rgba(255,255,255,.85); cursor:pointer;
+    font-size:20px; display:none; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.2);
+  }
+  #sound-toggle.show{ display:flex; }
+
+  @media (max-width:420px){
+    #envelope{ width:230px; height:158px; }
+    #letter{ width:190px; height:140px; }
+    #card{ padding:26px 20px; }
+    #card h1{ font-size:27px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scene">
+
+  <!-- Bintang background malam -->
+  <div id="stars"></div>
+
+  <!-- Tombol musik -->
+  <button id="sound-toggle" title="Mute/Unmute musik">🔊</button>
+
+  <!-- Dekorasi ulang tahun (balon + confetti) -->
+  <div id="deco-layer"></div>
+
+  <!-- TAHAP 1: KOTAK SURAT -->
+  <div id="mailbox-wrap">
+    <div id="mailbox">
+      <div id="mailbox-flag"></div>
+      <div id="mailbox-peek"></div>
+    </div>
+    <div id="mailbox-pole"></div>
+  </div>
+
+  <!-- TAHAP 2 & 3: AMPLOP -->
+  <div id="envelope-stage">
+    <div id="envelope">
+      <div id="letter">
+        <div id="letter-lines">
+          <div></div><div></div><div></div><div></div>
+        </div>
+      </div>
+      <div id="env-body"></div>
+      <div id="env-flap"></div>
+      <div id="env-seal">💌</div>
+      <div id="drag-handle"><span>↕</span></div>
+    </div>
+  </div>
+
+  <!-- TAHAP 4: SURAT PENUH -->
+  <div id="full-letter">
+    <div id="card">
+      <h1>Untuk Ibu Tersayang</h1>
+      <div class="divider">🎂 🎈 🎉</div>
+      <p>
+        Selamat ulang tahun, Ibu. Hari ini adalah hari yang spesial untuk merayakan
+        wanita paling luar biasa yang pernah aku kenal. Terima kasih untuk semua kasih
+        sayang, kesabaran, dan doa yang tak pernah putus untukku.
+      </p>
+      <p>
+        Setiap pengorbanan yang Ibu lakukan, sekecil apa pun, sangat berarti bagiku.
+        Semoga di usia yang baru ini, Ibu selalu diberikan kesehatan, kebahagiaan,
+        dan umur panjang agar kita bisa terus bersama lebih lama lagi.
+      </p>
+      <p>
+        Aku mungkin tidak selalu bisa mengungkapkannya dengan kata-kata, tapi aku
+        sangat menyayangi Ibu, lebih dari yang Ibu tahu. Semoga semua impian dan
+        harapan Ibu dikabulkan Tuhan. Selamat ulang tahun, Ibu tercinta 🎁
+      </p>
+      <div class="signoff">Dengan cinta, anakmu ❤️</div>
+      <div id="close-hint">Gulir untuk membaca lebih lanjut jika perlu</div>
+    </div>
+  </div>
+
+  <div id="hint">Ketuk kotak surat untuk mengambil amplop</div>
+
+</div>
+
+<script>
+(function(){
+  const scene = document.getElementById('scene');
+  const hint = document.getElementById('hint');
+  const mailboxWrap = document.getElementById('mailbox-wrap');
+  const envelopeStage = document.getElementById('envelope-stage');
+  const envelope = document.getElementById('envelope');
+  const dragHandle = document.getElementById('drag-handle');
+  const letter = document.getElementById('letter');
+  const fullLetter = document.getElementById('full-letter');
+  const decoLayer = document.getElementById('deco-layer');
+  const soundToggle = document.getElementById('sound-toggle');
+
+  // ---------- bintang background ----------
+  for(let i=0;i<60;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*70+'%';
+    s.style.animationDelay = (Math.random()*2.5)+'s';
+    document.getElementById('stars').appendChild(s);
+  }
+
+  let stage = 'mailbox'; // mailbox -> taken -> opening -> pulling -> done
+
+  // ---------- STAGE 1: klik kotak surat ----------
+  mailboxWrap.addEventListener('click', () => {
+    if(stage !== 'mailbox') return;
+    stage = 'taken';
+    mailboxWrap.style.transition = 'transform .5s ease, opacity .5s ease';
+    mailboxWrap.style.transform = 'translateY(30px) scale(.8)';
+    mailboxWrap.style.opacity = '0';
+    setTimeout(()=>{ mailboxWrap.style.display='none'; }, 500);
+
+    envelopeStage.classList.add('show');
+    envelope.classList.add('taken');
+    hint.textContent = 'Ketuk atau geser sedikit bagian tengah amplop ke atas';
+  });
+
+  // ---------- STAGE 2: geser (atau cukup ketuk) tengah amplop untuk buka ----------
+  let dragStartY = null;
+  let envelopeOpened = false;
+  const OPEN_THRESHOLD = 12; // sangat kecil, mudah terpicu
+
+  function onDragStart(e){
+    if(stage !== 'taken' || envelopeOpened) return;
+    dragStartY = getY(e);
+    document.addEventListener('pointermove', onDragMove);
+    document.addEventListener('pointerup', onDragEnd);
+    e.preventDefault();
+  }
+  function getY(e){ return e.touches ? e.touches[0].clientY : e.clientY; }
+
+  function onDragMove(e){
+    if(dragStartY === null || envelopeOpened) return;
+    const diff = dragStartY - getY(e);
+    if(diff > OPEN_THRESHOLD){
+      openEnvelope();
+      return;
+    }
+    if(diff > 0){
+      dragHandle.style.transform = `translate(-50%, calc(-50% - ${diff}px))`;
+    }
+  }
+  function onDragEnd(){
+    // Ketukan/klik biasa (tanpa geser jauh) juga langsung membuka amplop
+    if(!envelopeOpened && stage === 'taken'){
+      openEnvelope();
+    }
+    dragStartY = null;
+    document.removeEventListener('pointermove', onDragMove);
+    document.removeEventListener('pointerup', onDragEnd);
+  }
+
+  dragHandle.addEventListener('pointerdown', onDragStart);
+  envelope.addEventListener('pointerdown', onDragStart);
+
+  function openEnvelope(){
+    if(envelopeOpened) return;
+    envelopeOpened = true;
+    stage = 'opening';
+    envelope.classList.add('opened');
+    document.removeEventListener('pointermove', onDragMove);
+    document.removeEventListener('pointerup', onDragEnd);
+    setTimeout(()=>{
+      letter.classList.add('visible');
+      stage = 'pulling';
+      hint.textContent = 'Ketuk atau tarik sedikit surat ke atas untuk membacanya';
+      setupLetterDrag();
+    }, 550);
+  }
+
+  // ---------- STAGE 3: tarik (atau cukup ketuk) surat ke atas ----------
+  function setupLetterDrag(){
+    let startY = null;
+    let currentOffset = 0;
+    const PULL_THRESHOLD = 20; // sangat kecil, mudah terpicu
+
+    function start(e){
+      if(stage !== 'pulling') return;
+      startY = getY(e);
+      currentOffset = 0;
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', end);
+      e.preventDefault();
+    }
+    function move(e){
+      if(startY === null) return;
+      const diff = startY - getY(e);
+      currentOffset = Math.max(0, diff);
+      letter.style.transform = `translateX(-50%) translateY(${-currentOffset}px)`;
+      if(currentOffset > PULL_THRESHOLD){
+        finishPull();
+      }
+    }
+    function end(){
+      // Ketukan/klik biasa (tanpa geser jauh) juga langsung menarik surat keluar
+      if(stage === 'pulling'){
+        finishPull();
+      }
+      startY = null;
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', end);
+    }
+    letter.addEventListener('pointerdown', start);
+  }
+
+  function finishPull(){
+    if(stage !== 'pulling') return;
+    stage = 'done';
+    document.removeEventListener('pointermove', null);
+    letter.style.transition = 'transform .5s ease, opacity .5s ease';
+    letter.style.transform = 'translateX(-50%) translateY(-260px) scale(1.05)';
+    letter.style.opacity = '0';
+    envelopeStage.style.transition = 'opacity .6s ease';
+    envelopeStage.style.opacity = '0';
+    hint.style.transition = 'opacity .4s ease';
+    hint.style.opacity = '0';
+
+    setTimeout(()=>{
+      envelopeStage.style.display = 'none';
+      scene.classList.add('celebrate');
+      fullLetter.classList.add('show');
+      startCelebration();
+      startMusic();
+      soundToggle.classList.add('show');
+    }, 550);
+  }
+
+  // ---------- Dekorasi: balon & confetti ----------
+  function startCelebration(){
+    const balloonColors = ['#ff6b6b','#ffd93d','#6bcB77','#4d96ff','#f78fb3','#ff9f43'];
+    for(let i=0;i<16;i++){
+      setTimeout(()=>{
+        const b = document.createElement('div');
+        b.className = 'balloon';
+        b.style.left = (Math.random()*90)+'%';
+        b.style.background = `radial-gradient(circle at 30% 25%, #fff8, ${balloonColors[i%balloonColors.length]})`;
+        b.style.setProperty('--drift', (Math.random()*140-70)+'px');
+        b.style.animationDuration = (7+Math.random()*4)+'s';
+        decoLayer.appendChild(b);
+        setTimeout(()=>b.remove(), 12000);
+      }, i*350);
+    }
+    const confettiColors = ['#ff6b6b','#ffd93d','#6bcB77','#4d96ff','#f78fb3','#a66bff'];
+    function dropConfetti(){
+      for(let i=0;i<6;i++){
+        const c = document.createElement('div');
+        c.className='confetti';
+        c.style.left = Math.random()*100+'%';
+        c.style.background = confettiColors[Math.floor(Math.random()*confettiColors.length)];
+        c.style.animationDuration = (3+Math.random()*2.5)+'s';
+        c.style.borderRadius = Math.random()>.5 ? '50%' : '2px';
+        decoLayer.appendChild(c);
+        setTimeout(()=>c.remove(), 6000);
+      }
+    }
+    dropConfetti();
+    setInterval(dropConfetti, 900);
+  }
+
+  // ---------- Musik instrumental "Happy Birthday" (disintesis, bebas hak cipta) ----------
+  let audioCtx = null;
+  let musicMuted = false;
+  let musicTimer = null;
+
+  const notes = { // frekuensi nada (G major)
+    D4:293.66, E4:329.63, Fs4:369.99, G4:392.00, A4:440.00, B4:493.88,
+    C5:523.25, D5:587.33
+  };
+  // melodi [frekuensi, durasi(detik)]
+  const melody = [
+    [notes.D4,.3],[notes.D4,.2],[notes.E4,.5],[notes.D4,.5],[notes.G4,.5],[notes.Fs4,1],
+    [notes.D4,.3],[notes.D4,.2],[notes.E4,.5],[notes.D4,.5],[notes.A4,.5],[notes.G4,1],
+    [notes.D4,.3],[notes.D4,.2],[notes.D5,.5],[notes.B4,.5],[notes.G4,.5],[notes.Fs4,.5],[notes.E4,1],
+    [notes.C5,.3],[notes.C5,.2],[notes.B4,.5],[notes.G4,.5],[notes.A4,.5],[notes.G4,1.2]
+  ];
+
+  function playNote(freq, dur, startTime){
+    if(!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(.22, startTime + .04);
+    gain.gain.exponentialRampToValueAtTime(.001, startTime + dur);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + dur + .05);
+  }
+
+  function scheduleMelody(){
+    if(musicMuted || !audioCtx) return;
+    let t = audioCtx.currentTime + .1;
+    let total = 0;
+    melody.forEach(([freq,dur])=>{
+      playNote(freq, dur*0.92, t);
+      t += dur;
+      total += dur;
+    });
+    musicTimer = setTimeout(scheduleMelody, total*1000 + 900);
+  }
+
+  function startMusic(){
+    try{
+      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      scheduleMelody();
+    }catch(e){ /* audio tidak tersedia */ }
+  }
+
+  soundToggle.addEventListener('click', ()=>{
+    musicMuted = !musicMuted;
+    soundToggle.textContent = musicMuted ? '🔇' : '🔊';
+    if(musicMuted){
+      clearTimeout(musicTimer);
+      if(audioCtx){ audioCtx.suspend(); }
+    } else {
+      if(audioCtx){ audioCtx.resume(); }
+      scheduleMelody();
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
